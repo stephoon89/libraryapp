@@ -5,7 +5,8 @@ let myLibrary = [
         title: "Winning Ugly",
         author: "Brad Gilbert",
         pages: 224,
-        read: 1,
+        read: 0
+        
     }
 ];
 
@@ -13,8 +14,9 @@ function Book(title, author, pages, read) {
     this.title = title
     this.author = author
     this.pages = pages
-    this.read = read
-    // possibly refactor this.info to prototype
+    this.read = 0
+    
+    // possibly refactor to prototypes for practice?
 }
 
 function addBookToLibrary () {
@@ -30,6 +32,7 @@ function addBookToLibrary () {
 
 let newItem;
 let index;
+let bookRead;
 
 function render() {
     // removes all HTML bookcard elements
@@ -47,6 +50,7 @@ function render() {
 
         myLibrary[index].id = index;
 
+
         //renders remove button
         let removeBtn = document.createElement("p");
         removeBtn.innerHTML = `Remove book`;
@@ -59,8 +63,25 @@ function render() {
             myLibrary.splice(bookIndex, 1)
             render();
         });
+
+        
+        // renders read toggle
+        let readToggle = document.createElement("p");
+        readToggle.innerHTML = myLibrary[index].read;
+        readToggle.style.background = "orange";
+        bookcards.appendChild(readToggle);
+
+        // changes object property read to 0 
+        let i = index;
+        readToggle.addEventListener("click", function () {
+           if(myLibrary[i].read == 0) {myLibrary[i].read = 1;}
+           else {myLibrary[i].read = 0;}
+           readToggle.innerHTML = myLibrary[i].read;
+        });
+
     }
 }
+
 
 const addBtn = document.querySelector(".addbtn");
 // think of a smarter name for "something"
