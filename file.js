@@ -9,7 +9,7 @@ let myLibrary = [
     }
 ];
 
-if(localStorage.length >= 1) {
+if(localStorage.length > 0) {
     getStoredBooks();
 } 
 
@@ -28,7 +28,7 @@ function addBookToLibrary () {
     let author = document.querySelector("#author").value;
     let pages = document.querySelector("#pages").value;
 
-    if(title == "" || author == "" || pages <= 0) { return };
+    if(title == "" || author == "" || pages < 1) { return };
 
     myLibrary.push(new Book(title, author, pages));
     storeBooks();
@@ -36,7 +36,6 @@ function addBookToLibrary () {
 
 let newItem;
 let index;
-let bookRead;
 
 function render() {
 
@@ -54,17 +53,47 @@ function render() {
 
         newItem = document.createElement("h3");
         newItem.className = "book-title"
-        newItem.style.background = "red";
         newItem.innerHTML = `${myLibrary[index].title} by ${myLibrary[index].author}, ${myLibrary[index].pages} pages` ;
         newBookCard.appendChild(newItem);
 
         myLibrary[index].id = index;
 
+        let description = document.createElement("p");
+        description.className = "description";
+        description.innerHTML = "Description: This will be Google API fetched description (and maybe an image on the right?)";
+        newBookCard.appendChild(description);
+
+        // renders div for read & remove actions
+        let actionDiv = document.createElement("div");
+        actionDiv.className = "actions";
+        newBookCard.appendChild(actionDiv);
+
+        // renders read toggle
+        let readToggle = document.createElement("p");
+        readToggle.className = "readtoggle";
+        readToggle.innerHTML = myLibrary[index].read;
+        actionDiv.appendChild(readToggle);
+
+        // changes object property read to 0 or 1
+        let i = index;
+        readToggle.addEventListener("click", function () {
+             if(myLibrary[i].read == "Not read") {
+                 myLibrary[i].read = "Read";
+                readToggle.style.color = "green";
+            }
+            else {
+                myLibrary[i].read = "Not read";
+                readToggle.style.color = "black";
+            }
+           readToggle.innerHTML = myLibrary[i].read;
+           storeBooks();
+        });
+
         //renders remove button
         let removeBtn = document.createElement("p");
-        removeBtn.className = "remove-btn"
-        removeBtn.innerHTML = `Remove book`;
-        newBookCard.appendChild(removeBtn);
+        removeBtn.className = "removebtn"
+        removeBtn.innerHTML = `Remove`;
+        actionDiv.appendChild(removeBtn);
     
         let bookIndex = myLibrary[index].id;
 
@@ -74,23 +103,6 @@ function render() {
             storeBooks();
             render();
         });
-        
-        // renders read toggle
-        let readToggle = document.createElement("p");
-        readToggle.className = "readToggle";
-        readToggle.innerHTML = myLibrary[index].read;
-        readToggle.style.background = "orange";
-        newBookCard.appendChild(readToggle);
-
-        // changes object property read to 0 or 1
-        let i = index;
-        readToggle.addEventListener("click", function () {
-           if(myLibrary[i].read == "Not read") {myLibrary[i].read = "Read";}
-           else {myLibrary[i].read = "Not read";}
-           readToggle.innerHTML = myLibrary[i].read;
-           storeBooks();
-        });
-
     }
 }
 
@@ -98,24 +110,21 @@ function render() {
 function storeBooks () {
     let myLibrary_serialized = JSON.stringify(myLibrary)
     localStorage.setItem("storedLibrary", myLibrary_serialized);
-    console.log(localStorage);
 }
 
 // function that retrieved the books from localStorage
 function getStoredBooks () {
     let myLibrary_deserialized = JSON.parse(localStorage.getItem("storedLibrary"));
-    console.log(myLibrary_deserialized);
     myLibrary = myLibrary_deserialized;
 }
 
-const addBtn = document.querySelector(".addbtn");
-// think of a smarter name for "something"
-addBtn.onclick = something;
-// the stuff that should happen when you click on add
-function something () {
+function goLibrary () {
     addBookToLibrary();
     render();
 }
+const addBtn = document.querySelector(".addbtn");
+// think of a smarter name for "something"
+addBtn.onclick = goLibrary;
 
-    render();
+render();
 
